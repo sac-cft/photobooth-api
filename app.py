@@ -7,6 +7,10 @@ import cv2
 import os
 from typing import List
 import uuid
+from tempfile import NamedTemporaryFile 
+from fastapi import FastAPI, File, UploadFile, Form
+from typing import Optional
+import logging
 
 app = FastAPI()
 
@@ -18,6 +22,7 @@ face_app.prepare(ctx_id=0, det_size=(640, 640))
 # Assuming the model is already downloaded as per your Flask version
 model_output_path = 'inswapper/inswapper_128.onnx'
 swapper = insightface.model_zoo.get_model('inswapper/inswapper_128.onnx', download=False, download_zip=False)
+
 
 # Directory setup
 UPLOAD_FOLDER = 'uploads'
@@ -38,6 +43,8 @@ def simple_face_swap(sourceImage, targetImage, face_app, swapper):
     img1_swapped = swapper.get(sourceImage, face1, face2, paste_back=True)
     
     return img1_swapped
+
+
 
 @app.post("/api/swap-face/")
 async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFile = File(...)):
@@ -61,6 +68,7 @@ async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFil
     cv2.imwrite(result_path, swapped_image)
 
     return FileResponse(result_path)
+
 
 if __name__ == "__main__":
     import uvicorn
