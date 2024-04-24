@@ -11,8 +11,10 @@ from tempfile import NamedTemporaryFile
 from fastapi import FastAPI, File, UploadFile, Form
 from typing import Optional
 import logging
+import uvicorn
 
 app = FastAPI()
+
 
 # Initialize FaceAnalysis
 face_app = FaceAnalysis(name='buffalo_l')
@@ -69,7 +71,5 @@ async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFil
 
     return FileResponse(result_path)
 
-
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app,host="0.0.0.0", port=8000)
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, ssl_keyfile="cert.key", ssl_certfile="cert.crt")
