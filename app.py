@@ -18,11 +18,15 @@ app = FastAPI()
 face_app = FaceAnalysis(name='buffalo_l')
 face_app.prepare(ctx_id=0, det_size=(640, 640))
 
-# Download and load the inswapper model
-# Assuming the model is already downloaded as per your Flask version
-model_output_path = 'inswapper/inswapper_128.onnx'
-swapper = insightface.model_zoo.get_model('inswapper/inswapper_128.onnx', download=False, download_zip=False)
+import gdown
 
+# Download 'inswapper_128.onnx' file using gdown
+model_url = 'https://drive.google.com/uc?id=1HvZ4MAtzlY74Dk4ASGIS9L6Rg5oZdqvu'
+model_output_path = 'inswapper/inswapper_128.onnx'
+if not os.path.exists(model_output_path):
+    gdown.download(model_url, model_output_path, quiet=False)
+
+swapper = insightface.model_zoo.get_model('inswapper/inswapper_128.onnx', download=False, download_zip=False)
 
 # Directory setup
 UPLOAD_FOLDER = 'uploads'
