@@ -11,11 +11,9 @@ from tempfile import NamedTemporaryFile
 from fastapi import FastAPI, File, UploadFile, Form
 from typing import Optional
 import logging
-import uvicorn
+from OpenSSL import SSL
 
 app = FastAPI()
-
-
 # Initialize FaceAnalysis
 face_app = FaceAnalysis(name='buffalo_l')
 face_app.prepare(ctx_id=0, det_size=(640, 640))
@@ -70,6 +68,12 @@ async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFil
     cv2.imwrite(result_path, swapped_image)
 
     return FileResponse(result_path)
+# HTTP
+# if __name__ == '__main__':
+#     import uvicorn
+#     uvicorn.run(app, host='0.0.0.0', port=8000)
 
+# HTTPS
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run("app:app", host="0.0.0.0", port=8000, ssl_keyfile="cert.key", ssl_certfile="cert.crt")
