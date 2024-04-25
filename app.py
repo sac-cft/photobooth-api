@@ -73,11 +73,11 @@ async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFil
 
     return FileResponse(result_path)
 # HTTP
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host='0.0.0.0', port=8000)
+# if __name__ == '__main__':
+#     import uvicorn
+#     uvicorn.run(app, host='0.0.0.0', port=8000)
 
 # HTTPS
-# if __name__ == "__main__":
-#     import uvicorn
-#     uvicorn.run("app:app", host="0.0.0.0", port=8000, ssl_keyfile="cert.key", ssl_certfile="cert.crt")
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run("app:app", host="0.0.0.0", port=8000, ssl_keyfile="cert.key", ssl_certfile="cert.crt")
