@@ -122,6 +122,7 @@ def swap_face_single(img1_fn, img2_fn, app, swapper,
         cv2.imwrite(output_fn, img1_)
         print(f'Image saved to {output_fn}')
     return img1_
+    
 def fine_face_swap(img1_fn, img2_fn, app, swapper,enhance=False, enhancer='REAL-ESRGAN 2x',device="cpu"):
     img1 = cv2.imread(img1_fn)
     facesimg1 = app.get(img1)
