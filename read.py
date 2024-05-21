@@ -199,87 +199,6 @@
 
 
 
-# from flask import Flask
-# from flask_socketio import SocketIO
-# import os
-# import urllib.request
-# import base64
-# import time
-
-# app = Flask(__name__)
-# socketio = SocketIO(app)
-
-# # Create directories to save images for different genders
-# os.makedirs('target_images', exist_ok=True)
-# os.makedirs('target_images2', exist_ok=True)
-
-# @app.route('/')
-# def index():
-#     return 'Server is running'
-
-# @socketio.on('connect')
-# def handle_connect():
-#     print('Client connected')
-
-# @socketio.on('disconnect')
-# def handle_disconnect():
-#     print('Client disconnected')
-
-# @socketio.on('img_send')
-# def handle_img_send(data):
-#     try:
-#         image_base64 = data.get('imageBase64')
-#         gender = data.get('gender')
-#         print(data)
-#         if not image_base64:
-#             raise ValueError('Image base64 data not found in payload')
-
-#         # Decode base64 data
-#         image_data = base64.b64decode(image_base64)
-
-#         # Generate a unique filename based on current timestamp
-#         image_name = f"{int(time.time() * 1000)}.jpg"
-
-#         # Determine the target directory based on gender
-#         if gender == 'male':
-#             target_dir = 'target_images'
-#         elif gender == 'female':
-#             target_dir = 'target_images2'
-#         else:
-#             raise ValueError('Invalid gender provided')
-
-#         image_path = os.path.join(target_dir, image_name)
-
-#         # Save the image to the file
-#         with open(image_path, 'wb') as f:
-#             f.write(image_data)
-
-#         print('Image saved:', image_path)
-#     except Exception as e:
-#         print('Error saving image:', str(e))
-
-# if __name__ == '__main__':
-#     socketio.run(app, host='192.168.1.226', port=3001)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 from flask import Flask
 from flask_socketio import SocketIO
 import os
@@ -289,6 +208,10 @@ import time
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+
+# Create directories to save images for different genders
+os.makedirs('target_images', exist_ok=True)
+os.makedirs('target_images2', exist_ok=True)
 
 @app.route('/')
 def index():
@@ -306,7 +229,9 @@ def handle_disconnect():
 def handle_img_send(data):
     try:
         image_base64 = data.get('imageBase64')
-        print(data)
+        gender = data.get('gender')
+        print(image_base64)
+        
         if not image_base64:
             raise ValueError('Image base64 data not found in payload')
 
@@ -315,7 +240,16 @@ def handle_img_send(data):
 
         # Generate a unique filename based on current timestamp
         image_name = f"{int(time.time() * 1000)}.jpg"
-        image_path = os.path.join('target_images', image_name)
+
+        # Determine the target directory based on gender
+        if gender == 'male':
+            target_dir = 'target_images'
+        elif gender == 'female':
+            target_dir = 'target_images2'
+        else:
+            raise ValueError('Invalid gender provided')
+
+        image_path = os.path.join(target_dir, image_name)
 
         # Save the image to the file
         with open(image_path, 'wb') as f:
@@ -326,7 +260,81 @@ def handle_img_send(data):
         print('Error saving image:', str(e))
 
 if __name__ == '__main__':
-    socketio.run(app, host='192.168.1.226', port=3001)
+    socketio.run(app, host='192.168.1.68', port=3001)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# from flask import Flask
+# from flask_socketio import SocketIO
+# import os
+# import urllib.request
+# import base64
+# import time
+
+# app = Flask(__name__)
+# socketio = SocketIO(app)
+
+# @app.route('/')
+# def index():
+#     return 'Server is running'
+
+# @socketio.on('connect')
+# def handle_connect():
+#     print('Client connected')
+
+# @socketio.on('disconnect')
+# def handle_disconnect():
+#     print('Client disconnected')
+
+# import requests
+# import base64
+
+# @socketio.on('img_send')
+# def handle_img_send(data):
+#     try:
+#         image_url = data.get('imageBase64')
+#         print(data)
+#         if not image_url:
+#             raise ValueError('Image URL not found in payload')
+
+#         # Fetch image content
+#         response = requests.get(image_url)
+#         response.raise_for_status()  # Raise an exception for 4xx or 5xx status codes
+
+#         # Encode image content to base64
+#         image_base64 = base64.b64encode(response.content).decode('utf-8')
+
+#         # Generate a unique filename based on current timestamp
+#         image_name = f"{int(time.time() * 1000)}.jpg"
+#         image_path = os.path.join('target_images', image_name)
+
+#         # Save the image to the file
+#         with open(image_path, 'wb') as f:
+#             f.write(response.content)
+
+#         print('Image saved:', image_path)
+#     except Exception as e:
+#         print('Error saving image:', str(e))
+
+# if __name__ == '__main__':
+#     socketio.run(app, host='192.168.1.68', port=3001)
 
 
 

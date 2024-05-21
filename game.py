@@ -211,7 +211,7 @@ def display_image(image_path):
 
         # Display image for 7 seconds
         start_time = time.time()
-        while time.time() - start_time < 7:
+        while time.time() - start_time < 10:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT or (event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE):
                     pygame.quit()
