@@ -48,7 +48,9 @@ def simple_face_swap(sourceImage, targetImage, face_app, swapper):
     
     return img1_swapped
 
-
+@app.get("/")
+async def read_root():
+    return {"message": "Hello, world!"}
 
 @app.post("/api/swap-face/")
 async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFile = File(...)):
@@ -75,9 +77,9 @@ async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFil
 # HTTP
 # if __name__ == '__main__':
 #     import uvicorn
-#     uvicorn.run(app, host='0.0.0.0', port=8000)
+#     uvicorn.run(app, port=5000)
 
 # HTTPS
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, ssl_keyfile="cert.key", ssl_certfile="cert.crt")
+    uvicorn.run("app:app", host="localhost",  port=9000,)

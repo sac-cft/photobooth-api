@@ -1,0 +1,1 @@
+call C:\Users\sachi\AppData\Local\Programs\Python\Python39\python app.py
