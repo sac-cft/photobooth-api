@@ -5,26 +5,13 @@ from insightface.app import FaceAnalysis
 import insightface
 import cv2
 import os
-from typing import List
 import uuid
-from tempfile import NamedTemporaryFile 
-from fastapi import FastAPI, File, UploadFile, Form
-from typing import Optional
-import logging
-from OpenSSL import SSL
+from fastapi import FastAPI, File, UploadFile
 
 app = FastAPI()
 # Initialize FaceAnalysis
 face_app = FaceAnalysis(name='buffalo_l')
 face_app.prepare(ctx_id=0, det_size=(640, 640))
-
-import gdown
-
-# Download 'inswapper_128.onnx' file using gdown
-# model_url = 'https://drive.google.com/uc?id=1HvZ4MAtzlY74Dk4ASGIS9L6Rg5oZdqvu'
-# model_output_path = 'inswapper/inswapper_128.onnx'
-# if not os.path.exists(model_output_path):
-#     gdown.download(model_url, model_output_path, quiet=False)
 
 swapper = insightface.model_zoo.get_model('inswapper/inswapper_128.onnx', download=False, download_zip=False)
 
@@ -47,8 +34,6 @@ def simple_face_swap(sourceImage, targetImage, face_app, swapper):
     img1_swapped = swapper.get(sourceImage, face1, face2, paste_back=True)
     
     return img1_swapped
-
-
 
 @app.post("/api/swap-face/")
 async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFile = File(...)):
@@ -73,11 +58,6 @@ async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFil
 
     return FileResponse(result_path)
 # HTTP
-# if __name__ == '__main__':
-#     import uvicorn
-#     uvicorn.run(app, host='0.0.0.0', port=8000)
-
-# HTTPS
-if __name__ == "__main__":
+if __name__ == '__main__':
     import uvicorn
-    uvicorn.run("app:app", host="0.0.0.0", port=8000, ssl_keyfile="cert.key", ssl_certfile="cert.crt")
+    uvicorn.run(app, host='localhost', port=8000)
