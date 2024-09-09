@@ -74,13 +74,18 @@ async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFil
     with open(img2_path, "wb") as buffer:
         shutil.copyfileobj(targetImage.file, buffer)
 
-    sourceImage = cv2.imread(img1_path)
-    targetImage = cv2.imread(img2_path)
+    sourceImage_cv = cv2.imread(img1_path)
+    targetImage_cv = cv2.imread(img2_path)
 
-    logging.info(f"Source image shape: {sourceImage.shape}")
-    logging.info(f"Target image shape: {targetImage.shape}")
+    if sourceImage_cv is None:
+        raise HTTPException(status_code=500, detail=f"Failed to read source image with OpenCV: {img1_path}")
+    if targetImage_cv is None:
+        raise HTTPException(status_code=500, detail=f"Failed to read target image with OpenCV: {img2_path}")
 
-    swapped_image = simple_face_swap(sourceImage, targetImage, face_app, swapper)
+    logging.info(f"Source image shape: {sourceImage_cv.shape}")
+    logging.info(f"Target image shape: {targetImage_cv.shape}")
+
+    swapped_image = simple_face_swap(sourceImage_cv, targetImage_cv, face_app, swapper)
     if swapped_image is None:
         raise HTTPException(status_code=500, detail="Face swap failed")
 
@@ -98,7 +103,7 @@ async def swap_faces(sourceImage: UploadFile = File(...), targetImage: UploadFil
 
     return FileResponse(result_path)
 
-# HTTP
+# HTTP server
 if __name__ == '__main__':
     import uvicorn
     uvicorn.run(app, host='localhost', port=8000)
