@@ -1,6 +1,7 @@
 from fastapi import FastAPI, File, Form, UploadFile, HTTPException
 from fastapi.responses import FileResponse
 import shutil
+import gdown
 from insightface.app import FaceAnalysis
 import insightface
 import cv2
@@ -20,6 +21,28 @@ logging.basicConfig(level=logging.INFO)
 # Initialize FaceAnalysis
 face_app = FaceAnalysis(name='buffalo_l')
 face_app.prepare(ctx_id=0, det_size=(640, 640))
+
+# Download 'inswapper_128.onnx' file using gdown
+# URLs for the models
+model_url = 'https://drive.google.com/uc?id=1HvZ4MAtzlY74Dk4ASGIS9L6Rg5oZdqvu'
+model_url2 = 'https://drive.google.com/uc?id=1jhhRaa66kDupnajlYu2VNEFp7Ekm_yM8'  # Replace with actual GFPGAN model ID
+
+# Output paths for the models
+model_output_path = 'inswapper/inswapper_128.onnx'
+model_output_path2 = 'models/GFPGANv1.4.pth'
+
+# Ensure directories exist
+os.makedirs(os.path.dirname(model_output_path), exist_ok=True)
+os.makedirs(os.path.dirname(model_output_path2), exist_ok=True)
+
+# Check and download models if they do not exist
+if not os.path.exists(model_output_path):
+    print(f"{model_output_path} not found. Downloading...")
+    gdown.download(model_url, model_output_path, quiet=False)
+
+if not os.path.exists(model_output_path2):
+    print(f"{model_output_path2} not found. Downloading...")
+    gdown.download(model_url2, model_output_path2, quiet=False)
 
 swapper = insightface.model_zoo.get_model('inswapper/inswapper_128.onnx', download=False, download_zip=False)
 
