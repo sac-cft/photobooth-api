@@ -99,38 +99,55 @@ def enhance_face(image):
     
 def add_two_logos_to_image(bg_img, logo_path1='1.png', logo_path2='2.png'):
     # Load the first logo (top-left)
-    logo1 = cv2.imread(logo_path1)
+    logo1 = cv2.imread(logo_path1, cv2.IMREAD_UNCHANGED)
     if logo1 is None:
         logging.error("First logo not found!")
         raise HTTPException(status_code=500, detail="First logo not found!")
 
     # Resize the first logo
     logo1 = cv2.resize(logo1, (50, 50))  # Adjust size as needed
-    
+
     # Position the first logo at the top-left corner
     logo1_x = 50  # Position from the left edge
     logo1_y = 50  # Position from the top edge
 
     # Overlay the first logo on the background image
-    bg_img[logo1_y:logo1_y + logo1.shape[0], logo1_x:logo1_x + logo1.shape[1]] = logo1
+    if logo1.shape[2] == 4:  # Check if the image has an alpha channel
+        alpha_channel = logo1[:, :, 3] / 255.0
+        for c in range(0, 3):
+            bg_img[logo1_y:logo1_y + logo1.shape[0], logo1_x:logo1_x + logo1.shape[1], c] = (
+                alpha_channel * logo1[:, :, c] +
+                (1 - alpha_channel) * bg_img[logo1_y:logo1_y + logo1.shape[0], logo1_x:logo1_x + logo1.shape[1], c]
+            )
+    else:
+        bg_img[logo1_y:logo1_y + logo1.shape[0], logo1_x:logo1_x + logo1.shape[1]] = logo1[:, :, :3]
 
     # Load the second logo (top-right)
-    logo2 = cv2.imread(logo_path2)
+    logo2 = cv2.imread(logo_path2, cv2.IMREAD_UNCHANGED)
     if logo2 is None:
         logging.error("Second logo not found!")
         raise HTTPException(status_code=500, detail="Second logo not found!")
 
     # Resize the second logo
     logo2 = cv2.resize(logo2, (100, 50))  # Adjust size as needed
-    
+
     # Position the second logo at the top-right corner
     logo2_x = bg_img.shape[1] - logo2.shape[1] - 50  # Position from the right edge
     logo2_y = 50  # Position from the top edge (same as first logo)
 
     # Overlay the second logo on the background image
-    bg_img[logo2_y:logo2_y + logo2.shape[0], logo2_x:logo2_x + logo2.shape[1]] = logo2
+    if logo2.shape[2] == 4:  # Check if the image has an alpha channel
+        alpha_channel = logo2[:, :, 3] / 255.0
+        for c in range(0, 3):
+            bg_img[logo2_y:logo2_y + logo2.shape[0], logo2_x:logo2_x + logo2.shape[1], c] = (
+                alpha_channel * logo2[:, :, c] +
+                (1 - alpha_channel) * bg_img[logo2_y:logo2_y + logo2.shape[0], logo2_x:logo2_x + logo2.shape[1], c]
+            )
+    else:
+        bg_img[logo2_y:logo2_y + logo2.shape[0], logo2_x:logo2_x + logo2.shape[1]] = logo2[:, :, :3]
 
     return bg_img
+
 
 
 @app.post("/api/swap-face/")
